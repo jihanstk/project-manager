@@ -43,7 +43,7 @@ const TaskCard = ({ task }) => {
       className="mt-3"
       draggable
       onDragStart={() => setActiveTaskIndex(task.id)}
-      onDragEnd={() => setActiveTaskIndex(null)}
+      // onDragEnd={() => setActiveTaskIndex(null)}
     >
       <Card style={{ width: 300 }}>
         <div className="">

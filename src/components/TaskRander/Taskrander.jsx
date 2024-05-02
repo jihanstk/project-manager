@@ -7,18 +7,17 @@ import axios from "axios";
 const Taskrander = () => {
   const taskIndex = useTasksStore((state) => state.tasksState.taskIndex);
     const [tasks,refetch] = useTasks()
-    console.log(tasks);
+    // console.log(tasks);
 
     const onDrop=(status,position,id)=>{
       if(taskIndex===undefined||taskIndex===null)return;
      const taskToMove = tasks[taskIndex]
-      const updatedTask = tasks.filter((task,index)=>index!==taskIndex)
-      updatedTask.splice(position,0,{
-        ...taskToMove,
-        status:status
-      })
+     console.log(id);
+      const updatedTask = tasks.find((task,index)=>task.id==taskIndex)
+      const taskID = updatedTask.id
       console.log(updatedTask);
-      axios.put(`https://6630ec7fc92f351c03db97ac.mockapi.io/tasks/${id}`,{status:status}).then(res=>{console.log(res)
+      updatedTask.status=status
+      axios.put(`https://6630ec7fc92f351c03db97ac.mockapi.io/tasks/${taskID}`,{status:status}).then(res=>{console.log(res)
       refetch()
     })
     }
