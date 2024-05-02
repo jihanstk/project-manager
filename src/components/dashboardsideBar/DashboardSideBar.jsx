@@ -40,8 +40,8 @@ const DashboardSideBar = ({ children }) => {
     </section>
     {/* content  */}
     <section className={`absolute right-0 min-h-screen w-[calc(100%-310px)] `}>
-        <div className="w-full bg-red-300 py-9 px-4 border-b shadow-sm">
-slkdfna;sl
+        <div className="w-full  py-9 px-4 border-b shadow-sm">
+            
         </div>
         {children}
     </section>
