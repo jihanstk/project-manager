@@ -49,6 +49,7 @@ const LoginForm = () => {
         router.push("/dashboard")
       }else{
         setErrMessage("Password doesn't match! please Try again")
+        setIsLoading(false);
       }
       
      }else{
