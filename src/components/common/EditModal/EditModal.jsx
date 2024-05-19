@@ -1,33 +1,26 @@
-import useTasks from "@/lib/Queries/useTasks";
+import { useTasksStore } from "@/TaskStore/Tasks";
 import { EditOutlined } from "@ant-design/icons";
-import {
-    Button,
-    Col,
-    DatePicker, Form, Input, Modal, Row
-} from 'antd';
-import axios from "axios";
-import { useEffect, useState } from 'react';
-const EditModal = ({id}) => {
-    const[,refetch]=useTasks()
-    const finishedHandler = (values) => {
-        const projectTask={
-          ...values,
-          task:[values.task],
-          status:singleTask.status
-        }
-        axios.put(`https://6630ec7fc92f351c03db97ac.mockapi.io/tasks/${id}`,projectTask)
-        .then(res=>{
-          console.log(res.data)
-          refetch()
-        })
-        console.log(values);
-      };
+import { Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
+import { useEffect, useState } from "react";
+const EditModal = ({ id }) => {
+  const tasks = useTasksStore((state) => state.tasksState.tasks);
+  const editTask = useTasksStore((state) => state.editTasks);
+  const finishedHandler = (values) => {
+    const projectTask = {
+      ...values,
+      task: [values.task],
+      status: singleTask.status,
+    };
+    editTask(projectTask, id);
+    setIsModalOpen(false);
+    console.log(values);
+  };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [singleTask, setSingleTask] = useState({});
-  useEffect(()=>{
-    axios.get(`https://6630ec7fc92f351c03db97ac.mockapi.io/tasks/${id}`)
-    .then(res=>setSingleTask(res.data))
-  },[id])
+  useEffect(() => {
+    const task = tasks.find((task) => task.id === id);
+    setSingleTask(task);
+  }, [tasks, id]);
   console.log(singleTask);
   const showModal = () => {
     setIsModalOpen(true);
@@ -40,17 +33,24 @@ const EditModal = ({id}) => {
   };
   return (
     <>
+      <EditOutlined
+        onClick={showModal}
+        className="text-lg cursor-pointer"
+        key="edit"
+      />
 
-      <EditOutlined onClick={showModal} className="text-lg cursor-pointer" key="edit" />
-
-      <Modal title="Edit Your Project" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-      <Form layout="vertical"  onFinish={finishedHandler}>
+      <Modal
+        title="Edit Your Project"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Form layout="vertical" onFinish={finishedHandler}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
                 name="projectName"
                 label="Project Name"
-            
                 rules={[
                   {
                     required: true,
@@ -58,7 +58,10 @@ const EditModal = ({id}) => {
                   },
                 ]}
               >
-                <Input defaultValue={singleTask.projectName} placeholder="Please enter your task title" />
+                <Input
+                  defaultValue={singleTask?.projectName}
+                  placeholder="Please enter your task title"
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -85,7 +88,7 @@ const EditModal = ({id}) => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="members" label="Assign Members (1 Email)">
-                <Input defaultValue={singleTask.members} />
+                <Input defaultValue={singleTask?.members} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -99,7 +102,7 @@ const EditModal = ({id}) => {
                   },
                 ]}
               >
-                <Input defaultValue={singleTask.task} />
+                <Input defaultValue={singleTask?.task} />
               </Form.Item>
             </Col>
           </Row>
@@ -116,7 +119,7 @@ const EditModal = ({id}) => {
                 ]}
               >
                 <Input.TextArea
-                defaultValue={singleTask.description}
+                  defaultValue={singleTask?.description}
                   rows={4}
                   placeholder="please enter url description"
                 />
@@ -125,11 +128,10 @@ const EditModal = ({id}) => {
           </Row>
           <Row gutter={16}>
             <Col span={24}>
-              <Form.Item
-              >
-                 <Button  htmlType="submit"  type="primary">
-              Submit
-            </Button>
+              <Form.Item>
+                <Button htmlType="submit" type="primary">
+                  Submit
+                </Button>
               </Form.Item>
             </Col>
           </Row>
@@ -138,7 +140,5 @@ const EditModal = ({id}) => {
     </>
   );
 };
-
-
 
 export default EditModal;

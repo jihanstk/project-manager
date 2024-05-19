@@ -1,5 +1,5 @@
 "use client";
-import useTasks from "@/lib/Queries/useTasks";
+import { useTasksStore } from "@/TaskStore/Tasks";
 import { PlusOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -12,12 +12,13 @@ import {
   Select,
   Space,
 } from "antd";
-import axios from "axios";
 import { useState } from "react";
 const { Option } = Select;
 const TaskDrower = () => {
   const [open, setOpen] = useState(false);
-  const[,refetch]=useTasks()
+  const taskAdd = useTasksStore((state) => state.addTask);
+  const tasks = useTasksStore((state) => state.tasksState.tasks);
+
   const showDrawer = () => {
     setOpen(true);
   };
@@ -25,16 +26,13 @@ const TaskDrower = () => {
     setOpen(false);
   };
   const finishedHandler = (values) => {
-    const projectTask={
+    const projectTask = {
       ...values,
-      task:[values.task],
-      status:"To Do"
-    }
-    axios.post("https://6630ec7fc92f351c03db97ac.mockapi.io/tasks",projectTask)
-    .then(res=>{
-      console.log(res.data)
-      refetch()
-    })
+      task: [values.task],
+      status: "To Do",
+      id: tasks.length + 1,
+    };
+    taskAdd(projectTask);
     console.log(values);
   };
   return (
@@ -56,11 +54,10 @@ const TaskDrower = () => {
         extra={
           <Space>
             <Button onClick={onClose}>Cancel</Button>
-            
           </Space>
         }
       >
-        <Form layout="vertical"  onFinish={finishedHandler}>
+        <Form layout="vertical" onFinish={finishedHandler}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -139,11 +136,10 @@ const TaskDrower = () => {
           </Row>
           <Row gutter={16}>
             <Col span={24}>
-              <Form.Item
-              >
-                 <Button onClick={onClose} htmlType="submit"  type="primary">
-              Submit
-            </Button>
+              <Form.Item>
+                <Button onClick={onClose} htmlType="submit" type="primary">
+                  Submit
+                </Button>
               </Form.Item>
             </Col>
           </Row>

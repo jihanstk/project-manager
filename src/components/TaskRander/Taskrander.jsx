@@ -1,26 +1,27 @@
-"use client"
+"use client";
 import { useTasksStore } from "@/TaskStore/Tasks";
 import TaskDrower from "@/components/TaskCard/TaskDrower";
 import TaskColumn from "@/components/TaskColumn/TaskColumn";
-import useTasks from "@/lib/Queries/useTasks";
-import axios from "axios";
 const Taskrander = () => {
   const taskIndex = useTasksStore((state) => state.tasksState.taskIndex);
-    const [tasks,refetch] = useTasks()
-    // console.log(tasks);
 
-    const onDrop=(status,position,id)=>{
-      if(taskIndex===undefined||taskIndex===null)return;
-     const taskToMove = tasks[taskIndex]
-     console.log(id);
-      const updatedTask = tasks.find((task,index)=>task.id==taskIndex)
-      const taskID = updatedTask.id
-      console.log(updatedTask);
-      updatedTask.status=status
-      axios.put(`https://6630ec7fc92f351c03db97ac.mockapi.io/tasks/${taskID}`,{status:status}).then(res=>{console.log(res)
-      refetch()
-    })
-    }
+  const tasks = useTasksStore((state) => state.tasksState.tasks);
+  const taskUpdate = useTasksStore((state) => state.TaskUpdate);
+
+  const onDrop = (status, position, id) => {
+    if (taskIndex === undefined || taskIndex === null) return;
+    const taskToMove = tasks[taskIndex];
+
+    console.log("id :", id, "position :", position, "status:", status);
+    const [movedTask] = tasks.filter((task) => task.id === id);
+    console.log("movedTask :", movedTask);
+    // const updatedTask = tasks.filter((t) => t.id !== id);
+    console.log("tasks :", tasks);
+    // updatedTask.splice(position - 1, 0, { ...movedTask, status: status });
+    movedTask.status = status;
+    console.log("updatedTask :", movedTask);
+    taskUpdate(movedTask, position);
+  };
   return (
     <div>
       <div className="border mt-2 py-3 px-4 rounded-md">

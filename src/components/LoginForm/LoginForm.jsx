@@ -1,7 +1,7 @@
 "use client";
+import { userDB } from "@/DB/user";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Spin } from "antd";
-import axios from "axios";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -11,52 +11,56 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [errMessage, setErrMessage] = useState("");
- const router =useRouter()
+  const router = useRouter();
+
+  // Register User Function
   const onFinishReg = (values) => {
     setIsLoading(true);
-    setErrMessage("")
+    setErrMessage("");
     console.log("Success:", values);
     if (values) {
-      axios
-        .post("https://6630ec7fc92f351c03db97ac.mockapi.io/user", values)
-        .then((res) => {
-          console.log(res);
-          setErrMessage("")
-          setIsLoading(false);
-        }).catch(err=>{
-
-          setErrMessage(err.message)
-          setIsLoading(false)
-        })
+      const userId = userDB.length + 1;
+      const user = { ...values, id: userId };
+      setTimeout(() => {
+        userDB.push(user);
+        console.log(userDB[userId - 1]);
+        const createdUser = userDB[userId - 1];
+        localStorage.setItem("user", JSON.stringify(createdUser));
+        router.push("/dashboard");
+        setIsLoading(false);
+        setErrMessage("");
+        return;
+      }, 1000);
     }
   };
 
   // Login  A User
-  const onFinishLogin = async(values) => {
-    setErrMessage("")
+  const onFinishLogin = async (values) => {
+    setErrMessage("");
     setIsLoading(true);
     console.log("Success:", values);
     if (values) {
-      const response = await axios.get("https://6630ec7fc92f351c03db97ac.mockapi.io/user")
-      console.log(response);
-      const users = response.data
-     const existUser =  users.filter(user=> user.email===values.email)
-     if(existUser.length>0 ){
-
-      if( existUser[0].password===values.password){
-        setIsLoading(false);
-        localStorage.setItem("user",existUser[0])
-        router.push("/dashboard")
-      }else{
-        setErrMessage("Password doesn't match! please Try again")
+      const existUser = userDB.filter((user) => user.email === values.email);
+      console.log(existUser);
+      if (existUser.length > 0) {
+        if (existUser[0].password === values.password) {
+          const LoggedUser = localStorage.getItem("user");
+          if (!LoggedUser) {
+            setIsLoading(false);
+            localStorage.setItem("user", JSON.stringify(existUser[0]));
+          } else {
+            setIsLoading(false);
+            router.push("/dashboard");
+          }
+        } else {
+          setErrMessage("Password doesn't match! please Try again");
+          setIsLoading(false);
+        }
+      } else {
+        setErrMessage("user Not Exist Please Register");
+        localStorage.removeItem("user");
         setIsLoading(false);
       }
-      
-     }else{
-      setErrMessage("user Not Exist Please Register")
-      localStorage.removeItem("user")
-      setIsLoading(false);
-     }
       // axios
       //   .get(`https://6630ec7fc92f351c03db97ac.mockapi.io/user/${values.id}`)
       //   .then((res) =>{ console.log(res)
@@ -110,7 +114,6 @@ const LoginForm = () => {
                 className="sm:mr-24 md:mr-0"
               >
                 <Form.Item
-
                   name="email"
                   rules={[
                     {
@@ -119,11 +122,13 @@ const LoginForm = () => {
                     },
                   ]}
                 >
-                  <Input placeholder="Your Email" className="py-2 px-3 focus:shadow-md"/>
+                  <Input
+                    placeholder="Your Email"
+                    className="py-2 px-3 focus:shadow-md"
+                  />
                 </Form.Item>
 
                 <Form.Item
-
                   name="password"
                   rules={[
                     {
@@ -132,7 +137,10 @@ const LoginForm = () => {
                     },
                   ]}
                 >
-                  <Input.Password placeholder="Password"  className="py-2 px-3 focus:shadow-md"  />
+                  <Input.Password
+                    placeholder="Password"
+                    className="py-2 px-3 focus:shadow-md"
+                  />
                 </Form.Item>
 
                 <Form.Item className="w-full mx-auto">
@@ -155,7 +163,6 @@ const LoginForm = () => {
                               spin
                             />
                           }
-                        
                         />
                       ) : (
                         ""
@@ -189,7 +196,10 @@ const LoginForm = () => {
                     },
                   ]}
                 >
-                  <Input placeholder="Your Name" className="py-2 px-3 focus:shadow-md" />
+                  <Input
+                    placeholder="Your Name"
+                    className="py-2 px-3 focus:shadow-md"
+                  />
                 </Form.Item>
                 <Form.Item
                   name="email"
@@ -200,7 +210,10 @@ const LoginForm = () => {
                     },
                   ]}
                 >
-                  <Input placeholder="Your Email" className="py-2 px-3 focus:shadow-md" />
+                  <Input
+                    placeholder="Your Email"
+                    className="py-2 px-3 focus:shadow-md"
+                  />
                 </Form.Item>
                 <Form.Item
                   name="password"
@@ -211,7 +224,10 @@ const LoginForm = () => {
                     },
                   ]}
                 >
-                  <Input.Password placeholder="Your Password" className="py-2 px-3" />
+                  <Input.Password
+                    placeholder="Your Password"
+                    className="py-2 px-3"
+                  />
                 </Form.Item>{" "}
                 <Form.Item className="w-full mx-auto">
                   <Button
@@ -233,7 +249,6 @@ const LoginForm = () => {
                               spin
                             />
                           }
-
                         />
                       ) : (
                         ""
