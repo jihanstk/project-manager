@@ -12,7 +12,7 @@ export  const userDB=[
         "name": "Jhon",
         "avatar": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1240.jpg",
         "email": "jhon@gmail.com",
-        "password": "akjsdnfkal.",
+        "password": "1234",
         "id": 2
       },
       {

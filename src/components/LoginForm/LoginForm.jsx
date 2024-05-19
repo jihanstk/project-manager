@@ -125,6 +125,7 @@ const LoginForm = () => {
                   <Input
                     placeholder="Your Email"
                     className="py-2 px-3 focus:shadow-md"
+                    defaultValue="jhon@gmail.com"
                   />
                 </Form.Item>
 
@@ -140,6 +141,7 @@ const LoginForm = () => {
                   <Input.Password
                     placeholder="Password"
                     className="py-2 px-3 focus:shadow-md"
+                    defaultValue="1234"
                   />
                 </Form.Item>
 
